@@ -20,24 +20,26 @@ public class SimpleStudentService implements StudentService {
     public List<Student> getStudentsBatch(Integer limit, Integer offset) throws SQLException {
         String selectStudentsBatchSql =
                 "SELECT * FROM \"students\" ORDER BY \"id\" LIMIT ? OFFSET ?;";
-        PreparedStatement statement = connection.prepareStatement(selectStudentsBatchSql);
-        statement.setInt(1, limit);
-        statement.setInt(2, offset);
 
-        ResultSet resultSet = statement.executeQuery();
+        try (PreparedStatement statement = connection.prepareStatement(selectStudentsBatchSql)) {
+            statement.setInt(1, limit);
+            statement.setInt(2, offset);
 
-        List<Student> students = new ArrayList<>();
-        while (resultSet.next()) {
-            students.add(new Student(
-                    resultSet.getLong("id"),
-                    resultSet.getString("name"),
-                    resultSet.getString("surname"),
-                    resultSet.getString("patronymic"),
-                    resultSet.getObject("birth_date", LocalDate.class),
-                    resultSet.getString("group")
-            ));
+            try (ResultSet resultSet = statement.executeQuery()) {
+                List<Student> students = new ArrayList<>();
+                while (resultSet.next()) {
+                    students.add(new Student(
+                            resultSet.getLong("id"),
+                            resultSet.getString("name"),
+                            resultSet.getString("surname"),
+                            resultSet.getString("patronymic"),
+                            resultSet.getObject("birth_date", LocalDate.class),
+                            resultSet.getString("group")
+                    ));
+                }
+                return students;
+            }
         }
-        return students;
     }
 
     @Override
@@ -46,16 +48,28 @@ public class SimpleStudentService implements StudentService {
                 "INSERT INTO \"students\" " +
                         "(\"name\", \"surname\", \"patronymic\", \"birth_date\", \"group\") " +
                         "VALUES (?, ?, ?, ?, ?)";
-        PreparedStatement statement = connection.prepareStatement(insertStudentSql);
-        statement.setString(1, student.name());
-        statement.setString(2, student.surname());
-        statement.setString(3, student.patronymic());
-        statement.setObject(4, student.birthDate());
-        statement.setString(5, student.group());
 
-        int insertionResult = statement.executeUpdate();
+        try (PreparedStatement statement = connection.prepareStatement(insertStudentSql)) {
+            statement.setString(1, student.name());
+            statement.setString(2, student.surname());
+            statement.setString(3, student.patronymic());
+            statement.setObject(4, student.birthDate());
+            statement.setString(5, student.group());
+            int insertionResult = statement.executeUpdate();
+            return insertionResult > 0;
+        }
+    }
 
-        return insertionResult > 0;
+    @Override
+    public Boolean deleteUserById(Long id) throws SQLException {
+        String deleteStudentByIdSql = "DELETE FROM \"students\" WHERE \"id\"=? LIMIT 1";
+
+        try (PreparedStatement statement = connection.prepareStatement(deleteStudentByIdSql)) {
+            statement.setLong(1, id);
+
+            int deletionResult = statement.executeUpdate();
+            return deletionResult == 1;
+        }
     }
 
 

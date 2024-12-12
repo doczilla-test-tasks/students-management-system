@@ -67,8 +67,18 @@ public class StudentController implements RestController {
     }
 
     Boolean deleteStudentById(Request request, Response response) {
-        //TODO: implement
-        throw new RuntimeException("Not implemented");
+        int status = HttpStatus.OK_200;
+        try {
+            Long id = Long.parseLong(request.params(":id"));
+
+            return studentService.deleteUserById(id);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            status = HttpStatus.BAD_REQUEST_400;
+            return false;
+        } finally {
+            response.status(status);
+        }
     }
 
 
