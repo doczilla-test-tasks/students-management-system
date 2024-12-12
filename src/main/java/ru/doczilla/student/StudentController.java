@@ -1,6 +1,7 @@
 package ru.doczilla.student;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import org.eclipse.jetty.http.HttpStatus;
 import ru.doczilla.common.RestController;
 import spark.Request;
@@ -24,15 +25,14 @@ public class StudentController implements RestController {
     @Override
     public void registerEndpoints() {
         path("/students", () -> {
-                    get(    "",         this::getAllStudents,       gson::toJson);
-                    post(   "/:id",     this::createStudentById,    gson::toJson);
-                    delete( "/:id",     this::deleteStudentById,    gson::toJson);
+                    get(    "",                 this::getAllStudents,       gson::toJson);
+                    post(   "/create",          this::createStudent,        gson::toJson);
+                    delete( "/delete/:id",      this::deleteStudentById,    gson::toJson);
                 }
         );
     }
 
     List<Student> getAllStudents(Request request, Response response) {
-        response.type("application/json");
         int status = HttpStatus.OK_200;
         try {
             Integer limit = Integer.parseInt(request.queryParams("limit"));
@@ -49,12 +49,24 @@ public class StudentController implements RestController {
         }
     }
 
-    Object createStudentById(Request request, Response response) {
-        //TODO: implement
-        throw new RuntimeException("Not implemented");
+    Boolean createStudent(Request request, Response response) {
+        int status = HttpStatus.OK_200;
+        try {
+            var student = gson.fromJson(request.body(), Student.class);
+            if (student.id() != null)
+                return false;
+
+            return studentService.createStudent(student);
+        } catch (SQLException | JsonSyntaxException e) {
+            e.printStackTrace();
+            status = HttpStatus.BAD_REQUEST_400;
+            return false;
+        } finally {
+            response.status(status);
+        }
     }
 
-    Object deleteStudentById(Request request, Response response) {
+    Boolean deleteStudentById(Request request, Response response) {
         //TODO: implement
         throw new RuntimeException("Not implemented");
     }

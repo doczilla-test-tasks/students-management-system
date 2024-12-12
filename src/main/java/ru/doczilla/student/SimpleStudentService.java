@@ -18,9 +18,9 @@ public class SimpleStudentService implements StudentService {
 
     @Override
     public List<Student> getStudentsBatch(Integer limit, Integer offset) throws SQLException {
-        String selectAllStudentsSql =
+        String selectStudentsBatchSql =
                 "SELECT * FROM \"students\" ORDER BY \"id\" LIMIT ? OFFSET ?;";
-        PreparedStatement statement = connection.prepareStatement(selectAllStudentsSql);
+        PreparedStatement statement = connection.prepareStatement(selectStudentsBatchSql);
         statement.setInt(1, limit);
         statement.setInt(2, offset);
 
@@ -39,4 +39,24 @@ public class SimpleStudentService implements StudentService {
         }
         return students;
     }
+
+    @Override
+    public Boolean createStudent(Student student) throws SQLException {
+        String insertStudentSql =
+                "INSERT INTO \"students\" " +
+                        "(\"name\", \"surname\", \"patronymic\", \"birth_date\", \"group\") " +
+                        "VALUES (?, ?, ?, ?, ?)";
+        PreparedStatement statement = connection.prepareStatement(insertStudentSql);
+        statement.setString(1, student.name());
+        statement.setString(2, student.surname());
+        statement.setString(3, student.patronymic());
+        statement.setObject(4, student.birthDate());
+        statement.setString(5, student.group());
+
+        int insertionResult = statement.executeUpdate();
+
+        return insertionResult > 0;
+    }
+
+
 }
