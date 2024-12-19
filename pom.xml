@@ -19,6 +19,7 @@
 
         <liquibase.core.version>4.30.0</liquibase.core.version>
         <liquibase.plugin.version>4.30.0</liquibase.plugin.version>
+        <jar.archive-name>studs-ms</jar.archive-name>
     </properties>
 
     <dependencyManagement>
@@ -101,6 +102,7 @@
                             <mainClass>ru.doczilla.Server</mainClass>
                         </manifest>
                     </archive>
+                    <finalName>${jar.archive-name}</finalName>
                 </configuration>
             </plugin>
             <plugin>
