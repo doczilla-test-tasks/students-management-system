@@ -9,6 +9,7 @@ import ru.doczilla.student.StudentController;
 import ru.doczilla.util.Filters;
 import ru.doczilla.adapter.LocalDateAdapter;
 
+import javax.crypto.spec.PSource;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.Set;
@@ -48,12 +49,12 @@ public class Server {
                     databaseAccessor.getConnection().close();
                 } catch (SQLException e) {
                     //TODO: replace with more reliable logging (with logback or log4j)
-                    e.printStackTrace();
+                    System.out.println(e.getMessage());
                 }
             }));
         } catch (Exception e) {
             //TODO: replace with more reliable logging (with logback or log4j)
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
     }
 }
