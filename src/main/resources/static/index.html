@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>SMS - student management system</title>
+
+    <script src="./libs/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+    <h1>Student Management System</h1>
+
+    <table id="students-table">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Surname</th>
+                <th>Name</th>
+                <th>Patronymic</th>
+                <th>Birth date</th>
+                <th>Group</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <div class="limits">
+        <input type="radio" name="limit" value="10" checked>10
+        <input type="radio" name="limit" value="15">15
+        <input type="radio" name="limit" value="20">20
+    </div>
+    <div class="table-description"></div>
+    <div class="prev-next">
+        <input type="button" name="prev" value="previous">
+        <input type="button" name="next" value="next">
+    </div>
+
+    <script src="js/students.js"></script>
+</body>
+</html>
