@@ -26,14 +26,49 @@
         <tbody></tbody>
     </table>
     <div class="limits">
-        <input type="radio" name="limit" value="10" checked>10
-        <input type="radio" name="limit" value="15">15
-        <input type="radio" name="limit" value="20">20
+        <label>
+            <input type="radio" name="limit" value="10" checked>
+            10
+        </label>
+        <label>
+            <input type="radio" name="limit" value="15">
+            15
+        </label>
+        <label>
+            <input type="radio" name="limit" value="20">
+            20
+        </label>
     </div>
     <div class="table-description"></div>
     <div class="prev-next">
         <input type="button" name="prev" value="previous">
         <input type="button" name="next" value="next">
+    </div>
+
+    <!--  TODO: maybe? turn off values caching  -->
+    <div id="create-student-controls">
+        <h3>Create new student</h3>
+        <label>
+            Name:
+            <input type="text" name="name">
+        </label>
+        <label>
+            Surname:
+            <input type="text" name="surname">
+        </label>
+        <label>
+            Patronymic:
+            <input type="text" name="patronymic">
+        </label>
+        <label>
+            Birthdate:
+            <input type="date" name="birthdate"/>
+        </label>
+        <label>
+            Group:
+            <input type="text" name="group">
+        </label>
+        <input type="button" name="create-student" value="Create">
     </div>
 
     <script src="js/students.js"></script>

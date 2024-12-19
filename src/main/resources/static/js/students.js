@@ -1,4 +1,4 @@
-function getStudentsBatchUrl(limit, offset) {
+function studentsBatchUrl(limit, offset) {
     baseUrl = "http://localhost:4567/api/v1/students";
     return baseUrl + "?limit=" + limit + "&offset=" + offset;
 }
@@ -8,9 +8,14 @@ function deleteStudentByIdUrl(id) {
     return baseUrl + "/delete/" + id;
 }
 
+function createStudentUrl() {
+    baseUrl = "http://localhost:4567/api/v1/students";
+    return baseUrl + "/create";
+}
+
 function getStudentsBatch(limit, offset) {
     $.get({
-        url: getStudentsBatchUrl(limit, offset * limit),
+        url: studentsBatchUrl(limit, offset * limit),
         dataType: "json",
         success: function(students) {
             $("#students-table tbody").html("");
@@ -60,13 +65,54 @@ function getStudentsBatch(limit, offset) {
     });
 }
 
+function validate(name, surname, birthDate, group) {
+    if (name.length === 0 || surname.length === 0 || birthDate.length === 0 || group.length === 0)
+        return false;
+    return true;
+}
+
+function getNewStudentParams() {
+    var controls    = $("#create-student-controls");
+    var name        = controls.find("input[name='name']").val();
+    var surname     = controls.find("input[name='surname']").val();
+    var patronymic  = controls.find("input[name='patronymic']").val();
+    var birthDate   = controls.find("input[name='birthdate']").val();
+    var group       = controls.find("input[name='group']").val();
+
+    if (!validate(name, surname, birthDate, group)) {
+        throw new Error("Validation failed");
+    }
+
+    return {
+        name: name,
+        surname: surname,
+        patronymic: patronymic.length === 0 ? null : patronymic,
+        birthDate: birthDate,
+        group: group,
+    };
+}
+
+function createStudent() {
+    $.post({
+        url: createStudentUrl(),
+        data: JSON.stringify(getNewStudentParams()),
+        dataType: "json",
+        success: function(status) {
+            console.log("Create new student result is: " + status);
+        },
+        error: function(err) {
+            console.log(err);
+        }
+    })
+}
+
 $(document).ready(function () {
     $("#students-table").data("offset", 0);
     getStudentsBatch(parseInt($("input:radio[name='limit']:checked").val()), $("#students-table").data("offset"));
    
     $(document).on("ajaxComplete", function(e, xhr, opts) {
-        var getStudentsBatchUrlRegex = new RegExp(".*\/api\/v1\/students\\?limit=\\d+&offset=\\d+");
-        if ((!getStudentsBatchUrlRegex.test(opts.url))) {
+        var studentsBatchUrlRegex = new RegExp(".*\/api\/v1\/students\\?limit=\\d+&offset=\\d+");
+        if ((!studentsBatchUrlRegex.test(opts.url))) {
             console.log("Resend request for table data");
             getStudentsBatch(parseInt($("input:radio[name='limit']:checked").val()), $("#students-table").data("offset"));
         }
@@ -89,6 +135,13 @@ $(document).ready(function () {
         } else {
             console.log("Unable to find previous page");
         }
+        getStudentsBatch(parseInt($("input:radio[name='limit']:checked").val()), $("#students-table").data("offset"));
+    });
+
+    $("#create-student-controls input[name='create-student']").click(function(e) {
+        //TODO: validation error handling
+        //TODO: error indication for user
+        createStudent();
         getStudentsBatch(parseInt($("input:radio[name='limit']:checked").val()), $("#students-table").data("offset"));
     });
 });
