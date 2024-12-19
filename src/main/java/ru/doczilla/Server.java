@@ -48,12 +48,12 @@ public class Server {
                     databaseAccessor.getConnection().close();
                 } catch (SQLException e) {
                     //TODO: replace with more reliable logging (with logback or log4j)
-                    e.printStackTrace();
+                    System.out.println(e.getMessage());
                 }
             }));
         } catch (Exception e) {
             //TODO: replace with more reliable logging (with logback or log4j)
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
     }
 }
