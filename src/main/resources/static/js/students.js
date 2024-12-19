@@ -10,10 +10,9 @@ function deleteStudentByIdUrl(id) {
 
 function getStudentsBatch(limit, offset) {
     $.get({
-        url: getStudentsBatchUrl(limit, offset),
+        url: getStudentsBatchUrl(limit, offset * limit),
         dataType: "json",
         success: function(students) {
-            
             $("#students-table tbody").html("");
             $.each(students, function (idx, student) { 
                 $("#students-table tbody").append(
@@ -21,7 +20,7 @@ function getStudentsBatch(limit, offset) {
                         .data("student", student)
                         .append(
                             $("<td></td>").append(
-                                offset + idx + 1
+                                offset * limit + idx + 1
                             ),
                             $("<td></td>").append(student["surname"]),
                             $("<td></td>").append(student["name"]),
@@ -49,8 +48,8 @@ function getStudentsBatch(limit, offset) {
                 });
             });
             
-            start = offset + 1;
-            end = offset + limit + 1;
+            start = offset * limit + 1;
+            end = (offset + 1) * limit;
             $(".table-description").html(
                 $("<p></p>").append(start + " to " + end)
             );
@@ -77,20 +76,19 @@ $(document).ready(function () {
         getStudentsBatch(parseInt($(this).val()), $("#students-table").data("offset"));
     });
 
+    //TODO: make some restrictions for "next" button
     $("input:button[name='next']").click(function(e) {
         var cur_offset = $("#students-table").data("offset");
-        $("#students-table").data("offset", cur_offset + parseInt($("input:radio[name='limit']:checked").val()));
+        $("#students-table").data("offset", cur_offset + 1);
         getStudentsBatch(parseInt($("input:radio[name='limit']:checked").val()), $("#students-table").data("offset"));
     });
-
     $("input:button[name='prev']").click(function(e) {
-            var cur_offset = $("#students-table").data("offset");
-            var cur_limit = parseInt($("input:radio[name='limit']:checked").val());
-            if (cur_offset >= cur_limit) {
-                $("#students-table").data("offset", cur_offset - cur_limit);
-            } else {
-                console.log("Unable to find previous page");
-            }
-            getStudentsBatch(parseInt($("input:radio[name='limit']:checked").val()), $("#students-table").data("offset"));
-        });
+        var cur_offset = $("#students-table").data("offset");
+        if (cur_offset > 0) {
+            $("#students-table").data("offset", cur_offset - 1);
+        } else {
+            console.log("Unable to find previous page");
+        }
+        getStudentsBatch(parseInt($("input:radio[name='limit']:checked").val()), $("#students-table").data("offset"));
+    });
 });
